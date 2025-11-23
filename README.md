@@ -54,17 +54,52 @@ This creates a **personalized, adaptive learning path** that feels like studying
 ## 🧱 Architecture
 
 ```
-User
- |
- ↓
-Coach Agent (Orchestrator)
- |--- Planner Agent → Break topic into steps
- |--- Tutor Agent → Explain step with examples (uses google_search tool)
- |--- Quiz Agent → Ask questions & evaluate
- |--- update_progress Tool → Save learning progress
- |
- ↓
-Memory Service (Personal learning history)
++---------------------------+
+|         User              |
+|  (asks to learn topic)    |
++------------+--------------+
+             |
+             v
++---------------------------+
+|       Coach Agent         |  <--- Orchestrator / Controller
+| Coordinates the workflow  |
+| Decides when to call tools|
++------------+--------------+
+             |
+   ---------------------------------------------
+   |                  |                      |
+   v                  v                      v
++----------------+  +--------------------+  +----------------+
+| Planner Agent  |  |    Tutor Agent     |  |   Quiz Agent   |
+| Breaks topic   |  | Explains each step |  | Creates quiz    |
+| into steps     |  | Uses google_search |  | evaluates answer |
++--------+-------+  +----------+---------+  +---------+-------+
+         |                     |                       |
+         |                     |                       |
+         |                     |                       |
+         ------------------------------------------------
+                             |
+                             v
+                  +------------------------+
+                  |  update_progress Tool  |
+                  | Logs performance result|
+                  +-----------+------------+
+                              |
+                              v
+                +-----------------------------+
+                |   Sessions & Memory System  |
+                | (InMemorySessionService +   |
+                |  InMemoryMemoryService)     |
+                | Stores learning history     |
+                +--------------+--------------+
+                               |
+                               v
+                        +-------------+
+                        |  Long-term  |
+                        |   Memory    |
+                        +-------------+
+
+
 ```
 
 ---
